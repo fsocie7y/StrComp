@@ -1,5 +1,7 @@
 #include "user.h"
-
+int random(int min, int max) {
+	return min + rand() % (max - min);
+}
 user::user(string curUsername)
 {
 	this->curUsername = curUsername;
@@ -21,7 +23,7 @@ void user::mainMenu()
 	{
 		system("cls"); //очищення екрану
 		int square, price;
-		string name;
+		string name, dateT;
 		date dateRegister, dateEnd;
 
 		cout << "Введіть назву власності: " << endl;
@@ -36,17 +38,43 @@ void user::mainMenu()
 		/*dateEnd.year = dateRegister.year + 3;
 		dateEnd.month = dateRegister.month;
 		dateEnd.day = dateRegister.day;*/
-
-		cout << "Введіть дату закінчення: " << endl;
-		cout << "День: ";
+		link:
+		cout << "Введіть дату закінчення у форматі\nДД.ММ.РРРР: " << endl;
+		cin >> dateT;
+		vector<string> tmp;
+		tmp = split(dateT,".");
+		if (stoi(tmp[0])<=31) {
+			dateEnd.day = stoi(tmp[0]);
+		}
+		else {
+			cout << "При вводі допущено помилку, спробуйте ще раз";
+			goto link;
+		}
+		if (stoi(tmp[1])!=0&&stoi(tmp[1])<=12)
+		{
+			dateEnd.month = stoi(tmp[1]);
+		}
+		else {
+			cout << "При вводі допущено помилку, спробуйте ще раз";
+			goto link;
+		}
+		if (stoi(tmp[2]) != 0 && stoi(tmp[2])>=dateRegister.year)
+		{
+			dateEnd.year = stoi(tmp[2]);
+		}
+		else {
+			cout << "При вводі допущено помилку, спробуйте ще раз";
+			goto link;
+		}
+		/*cout << "День: ";
 		cin >> dateEnd.day;
 		cout << "Місяць: ";
 		cin >> dateEnd.month;
 		cout << "Рік: ";
-		cin >> dateEnd.year;
+		cin >> dateEnd.year;*/
 
-		srand(time(NULL));
-		price = rand() % 10000 + 4000;
+		srand(dateEnd.year);
+		price = random(500, 5000);
 
 		DatabaseSession.add(curUsername, name, dateRegister, dateEnd, price);
 		mainMenu();
